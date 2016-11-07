@@ -37,21 +37,21 @@ I2cDevice::~I2cDevice()
 }
 
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
-int8_t I2cDevice::smbus_read_data(uint_8 reg)
+uint8_t I2cDevice::smbus_read_byte_data(uint8_t reg)
 {
   return i2c_smbus_read_byte_data(_file, reg);
 }
 #endif
 
 #if defined (HAVE_SMBUS_READ_WORD_DATA)
-int16_t I2cDevice::smbus_read_data(uint_8 reg)
+uint16_t I2cDevice::smbus_read_word_data(uint8_t reg)
 {
   return i2c_smbus_read_byte_data(_file, reg);
 }
 #endif
 
 #if defined (HAVE_SMBUS_READ_BLOCK_DATA)
-int32_t I2cDevice::smbus_read_data(uint_8 reg)
+uint32_t I2cDevice::smbus_read_block_data(uint8_t reg)
 {
   return i2c_smbus_read_byte_data(_file, reg);
 }

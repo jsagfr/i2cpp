@@ -22,38 +22,63 @@ public:
   // I2cDevice(std::string& const i2c, uint8_t addr);
   ~I2cDevice();
 
+  template<class T> void write(T data);
+  template<class T> T read();
   template<class T> T read(uint8_t reg);
 
 
   // TODO: instantiate with std::enable_if<sizeof(T) == 1/2/4>
   // template<class T> T smbus_read(uint8_t reg);
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
-  int8_t smbus_read_data(reg uint8_t);
+  uint8_t smbus_read_byte_data(uint8_t reg);
 #endif
 
 #if defined (HAVE_SMBUS_READ_WORD_DATA)
-  int16_t smbus_read_data(reg uint8_t);
+  uint16_t smbus_read_word_data(uint8_t reg);
 #endif
 
 #if defined (HAVE_SMBUS_READ_BLOCK_DATA)
-  int32_t smbus_read_data(reg uint8_t);
+  uint32_t smbus_read_block_data(uint8_t reg);
 #endif
 
 };
 
-
 template<class T>
-T I2cDevice::read(uint8_t reg) {
+void I2cDevice::write(T data) {
   constexpr unsigned int s = sizeof(T);
   char buf[s] = {0};
-  buf[0] = reg;
-  if (read(_file, buf, s) != s)
+  char * buf_data = reinterpret_cast<char *>(&data);
+  for (unsigned int i = 0; i < s; i++)
+    {
+      buf[i] = buf_data[s-1-i];
+    }
+  
+  if (::write(_file, buf, s) != s)
+    {
+      // TODO: Throw Error
+      std::cerr << "Unable to read register on device." << std::endl;
+      std::terminate();
+    }
+};
+
+template<class T>
+T I2cDevice::read() {
+  constexpr unsigned int s = sizeof(T);
+  char buf[s] = {0};
+  if (::read(_file, buf, s) != s)
     {
       // TODO: Throw Error
       std::cerr << "Unable to read register on device." << std::endl;
       std::terminate();
     }
   return reinterpret_cast<T>(*buf);
+};
+
+
+template<class T>
+T I2cDevice::read(uint8_t reg) {
+  write(reg);
+  return read<T>();
 }
 
 #endif  // I2C_DEVICE_H

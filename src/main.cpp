@@ -13,8 +13,8 @@ int main()
   std::cout << "I am : " << std::bitset<8>(acc.read<char>(whoAmI)) << std::endl;
 
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
-  uint8_t iAm = acc.smbus_read(whoAmI);
-  std::cout << "I am : " << std::bitset<8>(iAm) << "(smbus version)" << std::endl;
+  uint8_t iAm = acc.smbus_read_byte_data(whoAmI);
+  std::cout << "I am : " << std::bitset<8>(iAm) << " (smbus version)" << std::endl;
 #endif
 
   exit(EXIT_SUCCESS);
