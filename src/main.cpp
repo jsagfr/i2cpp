@@ -9,9 +9,13 @@ const uint8_t whoAmI {0x0f};
 int main()
 {
   I2cDevice acc("/dev/i2c-2", accAddr);
-  
-  std::cout << "I am : " << std::bitset<8>(acc.read(whoAmI)) << std::endl;
-  // acc.write(reg, value);
+
+  std::cout << "I am : " << std::bitset<8>(acc.read<char>(whoAmI)) << std::endl;
+
+#if defined (HAVE_SMBUS_READ_BYTE_DATA)
+  uint8_t iAm = acc.smbus_read(whoAmI);
+  std::cout << "I am : " << std::bitset<8>(iAm) << "(smbus version)" << std::endl;
+#endif
 
   exit(EXIT_SUCCESS);
 }

@@ -1,15 +1,8 @@
 #include "I2cDevice.h"
-// #include <glib.h>
-// #include <glib/gprintf.h>
-// #include <errno.h>
-// #include <string.h>
 #include <stdio.h>
-// #include <stdlib.h>
 #include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
-// #include <sys/types.h>
-// #include <sys/stat.h>
 #include <fcntl.h>
 
 #include <iostream>
@@ -43,8 +36,23 @@ I2cDevice::~I2cDevice()
   close(_file);
 }
 
-uint8_t I2cDevice::read(uint8_t reg)
+#if defined (HAVE_SMBUS_READ_BYTE_DATA)
+int8_t I2cDevice::smbus_read_data(uint_8 reg)
 {
   return i2c_smbus_read_byte_data(_file, reg);
 }
-/* uint16_t read(uint8_t reg); */
+#endif
+
+#if defined (HAVE_SMBUS_READ_WORD_DATA)
+int16_t I2cDevice::smbus_read_data(uint_8 reg)
+{
+  return i2c_smbus_read_byte_data(_file, reg);
+}
+#endif
+
+#if defined (HAVE_SMBUS_READ_BLOCK_DATA)
+int32_t I2cDevice::smbus_read_data(uint_8 reg)
+{
+  return i2c_smbus_read_byte_data(_file, reg);
+}
+#endif

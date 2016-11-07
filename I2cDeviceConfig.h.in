@@ -1,0 +1,3 @@
+#cmakedefine HAVE_SMBUS_READ_BYTE_DATA
+#cmakedefine HAVE_SMBUS_READ_WORD_DATA
+#cmakedefine HAVE_SMBUS_READ_BLOCK_DATA
