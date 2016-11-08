@@ -26,10 +26,10 @@ I2cDevice::I2cDevice(const char* i2c, uint8_t addr) :
     }
 }
 
-// I2cDevice::I2cDevice(std::string& const i2c, uint8_t addr) :
-//   I2cDevice(i2c.c_str(), addr)
-// {
-// }
+I2cDevice::I2cDevice(const std::string& i2c, uint8_t addr) :
+  I2cDevice(i2c.c_str(), addr)
+{
+}
 
 I2cDevice::~I2cDevice()
 {

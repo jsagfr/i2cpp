@@ -19,10 +19,11 @@ protected:
 
 public:
   I2cDevice(const char* i2c, uint8_t addr);
-  // I2cDevice(std::string& const i2c, uint8_t addr);
+  I2cDevice(const std::string& i2c, uint8_t addr);
   ~I2cDevice();
 
   template<class T> void write(T data);
+  template<class T> void write(uint8_t reg, T data);
   template<class T> T read();
   template<class T> T read(uint8_t reg);
 
@@ -60,6 +61,13 @@ void I2cDevice::write(T data) {
       std::terminate();
     }
 };
+
+template<class T>
+void I2cDevice::write(uint8_t reg, T data) {
+  write(reg);
+  write(data);
+};
+
 
 template<class T>
 T I2cDevice::read() {
