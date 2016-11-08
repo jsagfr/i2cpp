@@ -18,16 +18,17 @@ configure_file (
   "${PROJECT_BINARY_DIR}/I2cDeviceConfig.h"
   )
 
-
-set (PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-set (PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-include_directories("${PROJECT_BINARY_DIR}")
-include_directories("${PROJECT_INCLUDE_DIR}")
-
-set(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/I2cDevice.cpp)
+add_library(i2c++ src/I2cDevice.cpp)
 
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
-add_library(i2c++ ${SOURCES})
 set_property(TARGET i2c++ PROPERTY CXX_STANDARD 11)
 set_property(TARGET i2c++ PROPERTY CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
+
+target_include_directories(i2c++ PUBLIC include)
+
+install(TARGETS i2c++ DESTINATION lib)
+install(FILES include/I2cDevice.h DESTINATION include/i2c++)
