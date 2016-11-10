@@ -9,9 +9,11 @@ if(NOT HAVE_I2C_DEV_H)
   message( FATAL_ERROR "No linux/i2c-dev.h found" )
 endif()
 
-check_symbol_exists (i2c_smbus_read_byte_data linux/i2c-dev.h HAVE_SMBUS_READ_BYTE_DATA)
-check_symbol_exists (i2c_smbus_read_word_data linux/i2c-dev.h HAVE_SMBUS_READ_WORD_DATA)
-check_symbol_exists (i2c_smbus_read_block_data linux/i2c-dev.h HAVE_SMBUS_READ_BLOCK_DATA)
+check_symbol_exists(i2c_smbus_read_byte_data linux/i2c-dev.h HAVE_SMBUS_READ_BYTE_DATA)
+check_symbol_exists(i2c_smbus_read_word_data linux/i2c-dev.h HAVE_SMBUS_READ_WORD_DATA)
+check_symbol_exists(i2c_smbus_read_block_data linux/i2c-dev.h HAVE_SMBUS_READ_BLOCK_DATA)
+check_symbol_exists(i2c_smbus_write_byte_data linux/i2c-dev.h HAVE_I2C_SMBUS_WRITE_BYTE_DATA)
+check_symbol_exists(i2c_smbus_write_word_data linux/i2c-dev.h HAVE_I2C_SMBUS_WRITE_WORD_DATA)
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/I2cDeviceConfig.h.in"

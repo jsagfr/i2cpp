@@ -27,7 +27,6 @@ public:
   template<class T> T read();
   template<class T> T read(uint8_t reg);
 
-
   // TODO: instantiate with std::enable_if<sizeof(T) == 1/2/4>
   // template<class T> T smbus_read(uint8_t reg);
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
@@ -42,7 +41,15 @@ public:
   uint32_t smbus_read_block_data(uint8_t reg);
 #endif
 
+#if defined (HAVE_I2C_SMBUS_WRITE_BYTE_DATA)
+  void smbus_write(uint8_t reg, uint8_t data);
+#endif
+#if defined (HAVE_I2C_SMBUS_WRITE_WORD_DATA)
+  void smbus_write(uint8_t reg, uint16_t data);
+#endif
+  
 };
+
 
 template<class T>
 void I2cDevice::write(T data) {
@@ -60,12 +67,21 @@ void I2cDevice::write(T data) {
       std::cerr << "Unable to read register on device." << std::endl;
       std::terminate();
     }
+  std::cout << "I2cDevice::write(T data): '" << std::hex << static_cast<int>(data) << "' sizeof(data): '" << sizeof(data) << "'" << std::endl;
 };
 
 template<class T>
 void I2cDevice::write(uint8_t reg, T data) {
-  write(reg);
-  write(data);
+  constexpr unsigned int s = sizeof(T);
+  char buf[s+1] = {0};
+  buf[0] = reg;
+  char * buf_data = reinterpret_cast<char *>(&data);
+  for (unsigned int i = 0; i < s; i++)
+    {
+      buf[i+1] = buf_data[i];
+    }
+  write(buf);
+  std::cout << "I2cDevice::write(uint8_t reg, T data): reg: '" << std::hex << static_cast<int>(reg) << "' data: '" << std::hex << static_cast<int>(data) << "'sizeof(data): '" << sizeof(data) << "'" << std::endl;
 };
 
 
