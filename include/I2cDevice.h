@@ -54,14 +54,14 @@ public:
 template<class T>
 void I2cDevice::write(T data) {
   constexpr unsigned int s = sizeof(T);
-  char buf[s] = {0};
-  char * buf_data = reinterpret_cast<char *>(&data);
-  for (unsigned int i = 0; i < s; i++)
-    {
-      buf[i] = buf_data[s-1-i];
-    }
+  /* char buf[s] = {0}; */
+  /* char * buf_data = reinterpret_cast<char *>(&data); */
+  /* for (unsigned int i = 0; i < s; i++) */
+  /*   { */
+  /*     buf[i] = buf_data[s-1-i]; */
+  /*   } */
   
-  if (::write(_file, buf, s) != s)
+  if (::write(_file, data, s) != s)
     {
       // TODO: Throw Error
       std::cerr << "Unable to read register on device." << std::endl;
@@ -80,7 +80,13 @@ void I2cDevice::write(uint8_t reg, T data) {
     {
       buf[i+1] = buf_data[i];
     }
-  write(buf);
+  // write(buf);
+  if (::write(_file, buf, s+1) != s+1)
+    {
+      // TODO: Throw Error
+      std::cerr << "Unable to read register on device." << std::endl;
+      std::terminate();
+    }
   std::cout << "I2cDevice::write(uint8_t reg, T data): reg: '" << std::hex << static_cast<int>(reg) << "' data: '" << std::hex << static_cast<int>(data) << "'sizeof(data): '" << sizeof(data) << "'" << std::endl;
 };
 
