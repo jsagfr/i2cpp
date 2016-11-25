@@ -1,28 +1,45 @@
 #include "I2cDevice.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
 
+#include <stdexcept>
+#include <sstream>
 #include <iostream>
+#include <string>
+#include <iomanip>
+
+#include <cstring>
+#include <cerrno>
+
+#include <cstdio>
+// For C open
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+// For C close
+#include <unistd.h>
+// For i2c
+#include <linux/i2c-dev.h>
+// For ioctl
+#include <sys/ioctl.h>
+
 
 I2cDevice::I2cDevice(const char* i2c, uint8_t addr) :
   _file(-1),
+  _i2c(i2c),
   _addr(addr)
 {
   // const char *filename = i2c.c_str();
-  if ((_file = open(i2c, O_RDWR)) < 0)
+  if ((_file = ::open(i2c, O_RDWR | O_SYNC )) < 0)
     {
-      // TODO: Throw an error
-      std::cerr << "Failed to open the bus." << std::endl;
-      exit(1);
+      std::ostringstream e;
+      e << "unable to open '" << _i2c << "': " << std::strerror(errno);
+      throw std::ios_base::failure(e.str());
     }
   if (ioctl(_file, I2C_SLAVE, _addr) < 0)
     {
-      // TODO: Throw an error
-      std::cerr << "Failed to acquire bus access and/or talk to slave." << std::endl;
-      exit(1);
+      std::ostringstream e;
+      e << "in '" << _i2c << "'" << ", unable to set '" << _addr << "' as i2c slave: "
+	<< std::strerror(errno);
+      throw std::ios_base::failure(e.str());
     }
 }
 
@@ -33,8 +50,27 @@ I2cDevice::I2cDevice(const std::string& i2c, uint8_t addr) :
 
 I2cDevice::~I2cDevice()
 {
-  close(_file);
+  ::close(_file);
 }
+
+
+// void I2cDevice::write(const std::vector<uint8_t>& data)
+void I2cDevice::write(uint8_t* const data, size_t s)
+{
+  if (::write(_file, data, s) != s)
+    {
+      std::ostringstream e;
+      e << "in '" << _i2c << "'" << " for device '" << _addr << "', unable to write data: "
+	<< std::strerror(errno);
+      throw std::ios_base::failure(e.str());
+    }
+  std::cout << "I2cDevice::write(const vector<uint8_t> data): '";
+  std::vector<uint8_t> v(data, data + s);
+  for(auto c: v)
+    std::cout << std::setfill('0') << std::setw(2) << std::hex << static_cast<unsigned int>(c) << " ";
+  std::cout << "'" << std::endl;
+}
+
 
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
 uint8_t I2cDevice::smbus_read_byte_data(uint8_t reg)
