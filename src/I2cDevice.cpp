@@ -53,9 +53,11 @@ I2cDevice::~I2cDevice()
   ::close(_file);
 }
 
+inline void I2cDevice::write(uint8_t* data, size_t s) {
+  write(data, s);
+}
 
-// void I2cDevice::write(const std::vector<uint8_t>& data)
-void I2cDevice::write(uint8_t* const data, size_t s)
+void I2cDevice::write(const uint8_t* data, size_t s)
 {
   if (::write(_file, data, s) != s)
     {
@@ -69,6 +71,10 @@ void I2cDevice::write(uint8_t* const data, size_t s)
   for(auto c: v)
     std::cout << std::setfill('0') << std::setw(2) << std::hex << static_cast<unsigned int>(c) << " ";
   std::cout << "'" << std::endl;
+}
+
+void I2cDevice::write(std::initializer_list<uint8_t> data) {
+  write(data.begin(), data.size());
 }
 
 
