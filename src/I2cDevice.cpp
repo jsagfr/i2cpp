@@ -66,11 +66,6 @@ void I2cDevice::write(const uint8_t* data, size_t s)
 	<< std::strerror(errno);
       throw std::ios_base::failure(e.str());
     }
-  std::cout << "I2cDevice::write(const vector<uint8_t> data): '";
-  std::vector<uint8_t> v(data, data + s);
-  for(auto c: v)
-    std::cout << std::setfill('0') << std::setw(2) << std::hex << static_cast<unsigned int>(c) << " ";
-  std::cout << "'" << std::endl;
 }
 
 void I2cDevice::write(std::initializer_list<uint8_t> data) {

@@ -3,7 +3,17 @@
 
 #include <string>
 #include <vector>
+#include <array>
+#include <iostream>
 #include "I2cDeviceConfig.h"
+
+// For C open
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+// For C close
+#include <unistd.h>
+
 
 class I2cDevice
 {
@@ -21,6 +31,15 @@ public:
   void write(uint8_t* data, size_t s);
   void write(std::initializer_list<uint8_t> data);
 
+  template <typename T>
+  T read() {
+    std::array<char, sizeof(T)> buf;
+    if (::read(_file, buf.data(), sizeof(T)) != sizeof(T)) {
+      // TODO: Error
+    }
+    return  *reinterpret_cast<T*>(buf.data());
+  }
+  
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
   uint8_t smbus_read_byte_data(uint8_t reg);
 #endif
