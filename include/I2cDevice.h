@@ -39,6 +39,12 @@ public:
     }
     return  *reinterpret_cast<T*>(buf.data());
   }
+
+  template <typename T>
+  T read(uint8_t reg) {
+    write({reg});
+    return read<T>();
+  }
   
 #if defined (HAVE_SMBUS_READ_BYTE_DATA)
   uint8_t smbus_read_byte_data(uint8_t reg);
